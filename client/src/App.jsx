@@ -6,12 +6,14 @@ import Dashboard from './pages/Dashboard';
 import Singin from './pages/Singin';
 import Singup from './pages/Singup';
 import Projects from './pages/Projects';
+import Header from './components/Header';
 
 
 function App() {
 
   return (
     <BrowserRouter>
+    <Header />
       <Routes> 
         <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
