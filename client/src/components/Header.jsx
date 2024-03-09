@@ -32,9 +32,9 @@ function Header() {
                 <Button className='w-12 h-10 hidden sm:inline' color='grey' pill >
                     <FaMoon />
                 </Button>
-                <Link to="/signin" >
+                <Link to="/signup" >
                     <Button gradientDuoTone="purpleToBlue" outline >
-                        SignIn
+                        SignUp
                     </Button>
                 </Link>
 
