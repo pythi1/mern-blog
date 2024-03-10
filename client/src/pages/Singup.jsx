@@ -1,19 +1,51 @@
-import React from 'react'
-import { Form, Link } from 'react-router-dom';
-import {
-  Button,
-  Checkbox,
-  FileInput,
-  Label,
-  Radio,
-  RangeSlider,
-  Select,
-  Textarea,
-  TextInput,
-  ToggleSwitch,
-} from 'flowbite-react';
+import React, { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom';
+import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 
 function Singup() {
+
+  const [ formdata, setformdata ] = useState({});
+  const [errormessage, seterrormessage] = useState(null);
+  const [loading, setloading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setformdata({...formdata, [e.target.id]: e.target.value.trim()});
+  };
+  console.log(formdata);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if(!formdata.username || !formdata.email || !formdata.password){
+      return seterrormessage("please fill out all fields.");
+    }
+
+    // sending data to the server
+
+    try{
+      setloading(true);
+      seterrormessage(null);
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(formdata),
+      });
+      const data = await res.json();
+      if(data.success === false){
+        return seterrormessage(data.message);
+      }
+      setloading(false);
+      if(res.ok){
+        navigate("/signin");
+      }
+    }
+    catch (error) {
+      seterrormessage(error.message);
+      setloading(false)
+    }
+  }
+
   return (
     <div className='min-h-screen mt-20 ' >
 
@@ -36,36 +68,41 @@ function Singup() {
 
         <div className='flex-1' >
 
-          <form className='flex flex-col gap-4 ' >
+          <form className='flex flex-col gap-4 ' onSubmit={handleSubmit} >
             <div>
               <Label value='enter your name' />
               <TextInput
                 type='text'
                 placeholder='enter your name'
                 id='username'
+                onChange={handleChange}
               />
             </div>
 
             <div>
               <Label value='Your Email' />
               <TextInput
-                type='text'
+                type='email'
                 placeholder='your email'
                 id='email'
+                onChange={handleChange}
               />
             </div>
 
             <div>
               <Label value='Password' />
               <TextInput
-                type='text'
+                type='password'
                 placeholder='your password'
                 id='password'
+                onChange={handleChange}
               />
             </div>
 
-            <Button gradientDuoTone="purpleToPink" outline type='submit' >
-              SignUp
+            <Button gradientDuoTone="purpleToPink" outline type='submit' disabled={loading} >
+              {
+                loading ? ( <><Spinner size="sm" /><span className='pl-3' >loading...</span></> ) : "Sign Up"
+              }
             </Button>
           </form>
 
@@ -74,6 +111,13 @@ function Singup() {
           <Link to="/signin" className='text-blue-600' > Signin </Link>
 
           </div>
+          {
+            errormessage && (
+              <Alert className='mt-5' color="failure">
+                {errormessage}
+              </Alert>
+            )
+          }
 
         </div>
 
