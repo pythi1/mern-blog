@@ -18,7 +18,7 @@ function Singup() {
     e.preventDefault();
 
     if(!formdata.username || !formdata.email || !formdata.password){
-      return seterrormessage("please fill out all fields.");
+      return seterrormessage("please fill out all fields signup.");
     }
 
     // sending data to the server
@@ -33,7 +33,7 @@ function Singup() {
       });
       const data = await res.json();
       if(data.success === false){
-        return seterrormessage(data.message);
+        return seterrormessage(data.message + "frontend data success false ");
       }
       setloading(false);
       if(res.ok){
