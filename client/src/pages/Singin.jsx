@@ -1,48 +1,60 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/Userslice';
+import { useDispatch, useSelector } from "react-redux";
 
 function Singin() {
 
-  const [ formdata, setformdata ] = useState({});
-  const [errormessage, seterrormessage] = useState(null);
-  const [loading, setloading] = useState(false);
+  const [formdata, setformdata] = useState({});
+
+  // const [errormessage, seterrormessage] = useState(null);
+  // const [loading, setloading] = useState(false);
+  const { loading, error: errormessage } = useSelector(state => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setformdata({...formdata, [e.target.id]: e.target.value.trim()});
+    setformdata({ ...formdata, [e.target.id]: e.target.value.trim() });
   };
   console.log(formdata);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!formdata.email || !formdata.password){
-      return seterrormessage("please fill out all fields signin.");
+    if (!formdata.email || !formdata.password) {
+      return dispatch(signInFailure("Please fill out all the fields."));
     }
 
     // sending data to the server
 
-    try{
-      setloading(true);
-      seterrormessage(null);
+    try {
+      // setloading(true);
+      // seterrormessage(null);
+
+      dispatch(signInStart());
+
       const res = await fetch("/api/auth/signin", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formdata),
       });
       const data = await res.json();
-      if(data.success === false){
-        return seterrormessage(data.message + "frontend fetching data");
+      if (data.success === false) {
+        // return seterrormessage(data.message );
+        dispatch(signInFailure(data.message));
       }
-      setloading(false);
-      if(res.ok){
+      // setloading(false);
+      if (res.ok) {
+        dispatch(signInSuccess(data))
         navigate("/home");
       }
     }
     catch (error) {
-      seterrormessage(error.message);
-      setloading(false)
+
+      dispatch(signInFailure(error.message));
+      // seterrormessage(error.message);
+      // setloading(false)
     }
   }
 
@@ -101,14 +113,14 @@ function Singin() {
 
             <Button gradientDuoTone="purpleToPink" outline type='submit' disabled={loading} >
               {
-                loading ? ( <><Spinner size="sm" /><span className='pl-3' >loading...</span></> ) : "Sign In"
+                loading ? (<><Spinner size="sm" /><span className='pl-3' >loading...</span></>) : "Sign In"
               }
             </Button>
           </form>
 
           <div className='flex gap-2 text-sm mt-5 font-semibold' >
-          <span>Don't have an account</span>
-          <Link to="/signup" className='text-blue-600' > SignUP </Link>
+            <span>Don't have an account</span>
+            <Link to="/signup" className='text-blue-600' > SignUP </Link>
 
           </div>
           {
