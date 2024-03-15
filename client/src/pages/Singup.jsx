@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
+import Oauth from '../components/Oauth';
 
 function Singup() {
 
@@ -104,6 +105,9 @@ function Singup() {
                 loading ? ( <><Spinner size="sm" /><span className='pl-3' >loading...</span></> ) : "Sign Up"
               }
             </Button>
+
+            <Oauth />
+
           </form>
 
           <div className='flex gap-2 text-sm mt-5 font-semibold' >

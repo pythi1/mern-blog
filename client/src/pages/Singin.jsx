@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react';
 import { signInStart, signInSuccess, signInFailure } from '../redux/user/Userslice';
 import { useDispatch, useSelector } from "react-redux";
+import Oauth from '../components/Oauth';
 
 function Singin() {
 
@@ -116,6 +117,9 @@ function Singin() {
                 loading ? (<><Spinner size="sm" /><span className='pl-3' >loading...</span></>) : "Sign In"
               }
             </Button>
+
+            <Oauth />
+            
           </form>
 
           <div className='flex gap-2 text-sm mt-5 font-semibold' >
