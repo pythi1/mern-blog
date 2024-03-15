@@ -1,12 +1,14 @@
 import React from 'react';
-import { Button, Navbar, TextInput } from "flowbite-react";
+import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation } from 'react-router-dom';
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
 function Header() {
 
     const path = useLocation().pathname;
+    const { currentuser } = useSelector(state => state.user);
 
     return (
         <Navbar className='border-b-2' >
@@ -32,41 +34,74 @@ function Header() {
                 <Button className='w-12 h-10 hidden sm:inline' color='grey' pill >
                     <FaMoon />
                 </Button>
-                <Link to="/signup" >
-                    <Button gradientDuoTone="purpleToBlue" outline >
-                        SignUp
-                    </Button>
-                </Link>
+
+                {
+                    currentuser 
+                    ?
+                        (<Dropdown
+                            arrowIcon={false}
+                            inline
+                            label={
+                                <Avatar
+                                    alt='user'
+                                    img={currentuser.profilePicture}
+                                    rounded
+                                />
+                            } >
+                                <Dropdown.Header>
+                                    <span className='block text-sm' >@{currentuser.username}</span>
+                                    <span className='block text-sm font-medium truncate' >{currentuser.email}</span>
+                                </Dropdown.Header>
+
+                                <Link to={"/dashboard?tab=profile"} >
+                                    <Dropdown.Item>profile</Dropdown.Item>
+                                </Link>
+
+                                <Dropdown.Divider />
+                                <Dropdown.Item>Sign Out</Dropdown.Item>
+
+                        </Dropdown>)
+                    :
+
+                        <Link to="/signup" >
+                            <Button gradientDuoTone="purpleToBlue" outline >
+                                SignUp
+                            </Button>
+                        </Link>
+
+                }
+
+
 
                 <Navbar.Toggle />
 
-                
+
             </div>
 
             <Navbar.Collapse >
-                    <Navbar.Link active={path=="/home"} as={'div'} >
-                        <Link to="/home" > 
+                <Navbar.Link active={path == "/home"} as={'div'} >
+                    <Link to="/home" >
                         Home
-                        </Link>
+                    </Link>
 
-                    </Navbar.Link>
+                </Navbar.Link>
 
-                    <Navbar.Link active={path=="/about"} as={'div'} >
-                        <Link to="/about" > 
+                <Navbar.Link active={path == "/about"} as={'div'} >
+                    <Link to="/about" >
                         About
-                        </Link> 
+                    </Link>
 
-                    </Navbar.Link>
+                </Navbar.Link>
 
-                    <Navbar.Link active={path=="/projects"} as={'div'} >
-                        <Link to="/projects" > 
+                <Navbar.Link active={path == "/projects"} as={'div'} >
+                    <Link to="/projects" >
                         Projects
-                        </Link>
+                    </Link>
 
-                    </Navbar.Link>
+                </Navbar.Link>
 
 
-                </Navbar.Collapse>
+            </Navbar.Collapse>
 
         </Navbar>
     )
