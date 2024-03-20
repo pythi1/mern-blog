@@ -8,17 +8,20 @@ import Singup from './pages/Singup';
 import Projects from './pages/Projects';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import PrivateRoute from './components/PrivateRoute.jsx';
 
 
 function App() {
 
   return (
     <BrowserRouter>
-    <Header />
-      <Routes> 
+      <Header />
+      <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
         <Route path="/signin" element={<Singin />} />
         <Route path="/signup" element={<Singup />} />
         <Route path="/projects" element={<Projects />} />
