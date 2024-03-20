@@ -2,13 +2,17 @@ import React from 'react';
 import { Avatar, Button, Dropdown, Navbar, TextInput } from "flowbite-react";
 import { Link, useLocation } from 'react-router-dom';
 import { AiOutlineSearch } from "react-icons/ai";
-import { FaMoon } from "react-icons/fa6";
-import { useSelector } from "react-redux";
+import { FaMoon, FaSun } from "react-icons/fa6";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleTheme } from '../redux/theme/ThemeSlice';
+
 
 function Header() {
 
     const path = useLocation().pathname;
     const { currentuser } = useSelector(state => state.user);
+    const dispatch = useDispatch();
+    const {theme} = useSelector((state) => state.theme);
 
     return (
         <Navbar className='border-b-2' >
@@ -31,13 +35,19 @@ function Header() {
             </Button>
 
             <div className='flex gap-2 md:order-2'>
-                <Button className='w-12 h-10 hidden sm:inline' color='grey' pill >
-                    <FaMoon />
+                <Button
+                    className='w-12 h-10 hidden sm:inline'
+                    color='grey'
+                    pill
+                   onClick={() => dispatch(toggleTheme())}
+                >
+                    {theme === "light" ? <FaMoon /> : <FaSun /> }
+                     
                 </Button>
 
                 {
-                    currentuser 
-                    ?
+                    currentuser
+                        ?
                         (<Dropdown
                             arrowIcon={false}
                             inline
@@ -48,20 +58,20 @@ function Header() {
                                     rounded
                                 />
                             } >
-                                <Dropdown.Header>
-                                    <span className='block text-sm' >@{currentuser.username}</span>
-                                    <span className='block text-sm font-medium truncate' >{currentuser.email}</span>
-                                </Dropdown.Header>
+                            <Dropdown.Header>
+                                <span className='block text-sm' >@{currentuser.username}</span>
+                                <span className='block text-sm font-medium truncate' >{currentuser.email}</span>
+                            </Dropdown.Header>
 
-                                <Link to={"/dashboard?tab=profile"} >
-                                    <Dropdown.Item>profile</Dropdown.Item>
-                                </Link>
+                            <Link to={"/dashboard?tab=profile"} >
+                                <Dropdown.Item>profile</Dropdown.Item>
+                            </Link>
 
-                                <Dropdown.Divider />
-                                <Dropdown.Item>Sign Out</Dropdown.Item>
+                            <Dropdown.Divider />
+                            <Dropdown.Item>Sign Out</Dropdown.Item>
 
                         </Dropdown>)
-                    :
+                        :
 
                         <Link to="/signup" >
                             <Button gradientDuoTone="purpleToBlue" outline >
