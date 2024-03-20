@@ -27,7 +27,7 @@ function DashSidebar() {
                             Profile
                         </Sidebar.Item>
                     </Link>
-                    <Sidebar.Item icon={HiArrowSmRight} labelColor="dark" clasname="cursor-pointer" >
+                    <Sidebar.Item icon={HiArrowSmRight} labelColor="dark" className="cursor-pointer" >
                         Sign Out
                     </Sidebar.Item>
                 </Sidebar.ItemGroup>
