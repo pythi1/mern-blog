@@ -183,7 +183,7 @@ function DashProfile() {
 
         <div className='text-red-500 flex justify-between mt-5 ' >
           <span className='cursor-pointer' >Delete Acount</span>
-          <span className='cursor-pointer' >Delete Acount</span>
+          <span className='cursor-pointer' >Sign Out</span>
         </div>
 
         {updateUserSuccess && (<Alert color="success" className='mt-5'>{updateUserSuccess}</Alert> )}
