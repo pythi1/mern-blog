@@ -1,25 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from "react-redux";
-import { Alert, Button, TextInput } from "flowbite-react"
+import { Alert, Button, Modal, TextInput } from "flowbite-react"
 import { getDownloadURL, getStorage, uploadBytesResumable, ref } from "firebase/storage";
 import { app } from '../firebase';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import { updateStart, updateSuccess, updateFailure } from '../redux/user/Userslice.js';
-import { useDispatch} from "react-redux"
+import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure } from '../redux/user/Userslice.js';
+import { useDispatch } from "react-redux";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { asSafePromise } from '@reduxjs/toolkit/dist/tsHelpers.js';
 
 function DashProfile() {
 
-  const { currentuser } = useSelector(state => state.user);
+  const { currentuser, error } = useSelector(state => state.user);
   const [imageFile, setimageFile] = useState(null);
   const [imageUrl, setimageUrl] = useState(null);
   const filePickerRef = useRef();
   const [imagefileUploadingProgress, setimagefileUploadingProgress] = useState(null); // ye dikhane ke liye ki kitni file uplaod ho gyi hai 
   const [imagefileuploaderror, setimagefileuploaderror] = useState(null); // error jab image file uplpaod kr rahe ho.
   const [imageFileUploading, setimageFileUploading] = useState(false); // jab file uploading ho rahi ho tab
-  const [updateUserSuccess, setUpdateUserSuccess ] = useState(null);
+  const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateuserError, setupdateuserError] = useState(null);
   const [formdata, setformdata] = useState({});
+  const [showModal, setshowModal] = useState(false);
+
+
+
+
 
   const dispatch = useDispatch();
 
@@ -74,7 +81,7 @@ function DashProfile() {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => {
           setimageUrl(downloadUrl);
-          setformdata({...formdata, profilePicture : downloadUrl});
+          setformdata({ ...formdata, profilePicture: downloadUrl });
           setimageFileUploading(false);
         });
       }
@@ -84,19 +91,19 @@ function DashProfile() {
   };
 
   const handleInputeChange = (e) => {
-    setformdata({...formdata, [e.target.id] : e.target.value})
+    setformdata({ ...formdata, [e.target.id]: e.target.value })
   };
 
   const handleInputSubmit = async (e) => {
     e.preventDefault();
     setupdateuserError(null);
     setUpdateUserSuccess(null);
-    if(Object.keys(formdata).length === 0){
+    if (Object.keys(formdata).length === 0) {
       setupdateuserError("no changes Made");
       return;
     }
 
-    if(imageFileUploading){
+    if (imageFileUploading) {
       setupdateuserError("please wait for  image to finish uploading");
       return;
     }
@@ -107,27 +114,49 @@ function DashProfile() {
       const userid = currentuser._id
       const res = await fetch(`/api/user/update/${userid}`, {
         method: "PUT",
-        headers: {"content-Type" : "application/json"},
+        headers: { "content-Type": "application/json" },
         body: JSON.stringify(formdata),
       });
-      
+
       const data = await res.json();
 
-      if(!res.ok){
+      if (!res.ok) {
         dispatch(updateFailure(data.message));
         setupdateuserError(data.message)
       }
-      else{
+      else {
         dispatch(updateSuccess(data));
         setUpdateUserSuccess("Update Successfully...")
       }
-      
+
     } catch (error) {
       dispatch(updateFailure(error.message));
       setupdateuserError(error.message);
     }
 
-}
+  }
+
+  const handleDeleteUser = async () => {
+    setshowModal(false);
+    try {
+      dispatch(deleteUserStart());
+      const userid = currentuser._id;
+      const res = await fetch(`/api/user/delete/${userid}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if(!res.ok){
+        dispatch(deleteUserFailure(data.message));
+      }else{
+        dispatch(deleteUserSuccess(data));
+      }
+      
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
 
   console.log(formdata);
 
@@ -141,22 +170,22 @@ function DashProfile() {
         <div className='relative w-32 h-32 self-center cursor-pointer shadow-md overflow-hidden rounded-full' onClick={() => filePickerRef.current.click()} >
 
           {imagefileUploadingProgress && (
-            <CircularProgressbar 
-            value={imagefileUploadingProgress || 0} 
-            text={`${imagefileUploadingProgress}%`} 
-            strokeWidth={5}
-            styles={{
-              root:{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                top:"0",
-                left: "0",
-              },
-              path:{
-                stroke: `rgba(62,152,199), ${imagefileUploadingProgress / 100}`,
-              }
-            }}
+            <CircularProgressbar
+              value={imagefileUploadingProgress || 0}
+              text={`${imagefileUploadingProgress}%`}
+              strokeWidth={5}
+              styles={{
+                root: {
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  top: "0",
+                  left: "0",
+                },
+                path: {
+                  stroke: `rgba(62,152,199), ${imagefileUploadingProgress / 100}`,
+                }
+              }}
             />
           )}
 
@@ -179,16 +208,40 @@ function DashProfile() {
 
         <Button type='submit' gradientDuoTone="purpleToBlue" outline >Update</Button>
 
-      </form> 
+      </form>
 
-        <div className='text-red-500 flex justify-between mt-5 ' >
-          <span className='cursor-pointer' >Delete Acount</span>
-          <span className='cursor-pointer' >Sign Out</span>
-        </div>
+      <div className='text-red-500 flex justify-between mt-5 ' >
+        <span className='cursor-pointer' onClick={() => setshowModal(true)} >Delete Acount</span>
+        <span className='cursor-pointer' >Sign Out</span>
+      </div>
 
-        {updateUserSuccess && (<Alert color="success" className='mt-5'>{updateUserSuccess}</Alert> )}
+      {updateUserSuccess && (<Alert color="success" className='mt-5'>{updateUserSuccess}</Alert>)}
 
-        {updateuserError && (<Alert color="failure" className='mt-5'>{updateuserError}</Alert> )}
+      {updateuserError && (<Alert color="failure" className='mt-5'>{updateuserError}</Alert>)}
+
+      {error && (<Alert color="failure" className='mt-5'>{error}</Alert>)}
+
+      <Modal show={showModal} onClose={() => setshowModal(false)} popup size='md' >
+
+        <Modal.Header />
+
+        <Modal.Body>
+
+          <div className='text-center' >
+            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>Are you sure you want to DELETE this account</h3>
+
+            <div className='flex justify-center gap-4' >
+              <Button color='failure' onClick={ () => {handleDeleteUser}} > Yes i'm sure</Button>
+
+              <Button color='gray' onClick={() => setshowModal(false)} > No </Button>
+            </div>
+              
+          </div>
+
+        </Modal.Body>
+
+      </Modal>
 
     </div>
   )
