@@ -9,6 +9,8 @@ import Projects from './pages/Projects';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import PrivateAdminRoute from './components/PrivateAdminRoute.jsx';
+import CreatePost from './pages/CreatePost.jsx';
 
 
 function App() {
@@ -18,13 +20,23 @@ function App() {
       <Header />
       <Routes>
         <Route path="/home" element={<Home />} />
+
         <Route path="/about" element={<About />} />
+
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
         </Route>
+
+        <Route element={<PrivateAdminRoute />}>
+          <Route path='/create-post' element={<CreatePost />} />
+        </Route>
+
         <Route path="/signin" element={<Singin />} />
+
         <Route path="/signup" element={<Singup />} />
+
         <Route path="/projects" element={<Projects />} />
+
       </Routes>
       <Footer />
     </BrowserRouter>

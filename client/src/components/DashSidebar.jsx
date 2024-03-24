@@ -4,6 +4,7 @@ import { Sidebar } from "flowbite-react";
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from 'react-redux';
+import { signOutSuccess } from '../redux/user/Userslice';
 
 function DashSidebar() {
 
@@ -35,8 +36,7 @@ function DashSidebar() {
           }
     
         } catch (error) {
-          next(error);
-          console.log(error);
+            console.log(error);
         }
       }
 

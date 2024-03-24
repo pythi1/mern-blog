@@ -8,10 +8,11 @@ import 'react-circular-progressbar/dist/styles.css';
 import { updateStart, updateSuccess, updateFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure, signOutSuccess } from '../redux/user/Userslice.js';
 import { useDispatch } from "react-redux";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from 'react-router-dom';
 
 function DashProfile() {
 
-  const { currentuser, error } = useSelector(state => state.user);
+  const { currentuser, error, loading } = useSelector(state => state.user);
   const [imageFile, setimageFile] = useState(null);
   const [imageUrl, setimageUrl] = useState(null);
   const filePickerRef = useRef();
@@ -146,12 +147,12 @@ function DashProfile() {
 
       const data = await res.json();
 
-      if(!res.ok){
+      if (!res.ok) {
         dispatch(deleteUserFailure(data.message));
-      }else{
+      } else {
         dispatch(deleteUserSuccess(data));
       }
-      
+
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
     }
@@ -164,12 +165,12 @@ function DashProfile() {
       const res = await fetch('/api/user/signout', {
         method: 'POST',
       });
-  
+
       const data = await res.json();
-      if(!res.ok){
+      if (!res.ok) {
         console.log(data.message);
       }
-      else{
+      else {
         dispatch(signOutSuccess());
       }
 
@@ -225,7 +226,22 @@ function DashProfile() {
         <TextInput type='email' id="email" placeholder='email' defaultValue={currentuser.email} onChange={handleInputeChange} />
         <TextInput type='password' id="password" placeholder='password' onChange={handleInputeChange} />
 
-        <Button type='submit' gradientDuoTone="purpleToBlue" outline >Update</Button>
+        <Button type='submit' gradientDuoTone="purpleToBlue" outline disabled={loading || imageFileUploading} > {loading ? "loading..." : "Update"} </Button>
+
+        {
+          currentuser.isAdmin && (
+            <Link to={'/create-post'}>
+
+              <Button
+                gradientDuoTone='purpleToPink'
+                type='button'
+                className='w-full'
+              >
+                Create a post
+              </Button>
+            </Link>
+          )
+        }
 
       </form>
 
@@ -251,11 +267,11 @@ function DashProfile() {
             <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>Are you sure you want to DELETE this account</h3>
 
             <div className='flex justify-center gap-4' >
-              <Button color='failure' onClick={ () => {handleDeleteUser}} > Yes i'm sure</Button>
+              <Button color='failure' onClick={() => { handleDeleteUser }} > Yes i'm sure</Button>
 
               <Button color='gray' onClick={() => setshowModal(false)} > No </Button>
             </div>
-              
+
           </div>
 
         </Modal.Body>

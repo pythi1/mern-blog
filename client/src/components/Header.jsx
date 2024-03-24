@@ -5,6 +5,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa6";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleTheme } from '../redux/theme/ThemeSlice';
+import { signOutSuccess } from '../redux/user/Userslice';
 
 
 function Header() {
@@ -29,7 +30,6 @@ function Header() {
           }
     
         } catch (error) {
-          next(error);
           console.log(error);
         }
       }
