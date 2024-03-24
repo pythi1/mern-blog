@@ -14,6 +14,26 @@ function Header() {
     const dispatch = useDispatch();
     const {theme} = useSelector((state) => state.theme);
 
+    const handleSignOut = async () => {
+        try {
+          const res = await fetch('/api/user/signout', {
+            method: 'POST',
+          });
+      
+          const data = await res.json();
+          if(!res.ok){
+            console.log(data.message);
+          }
+          else{
+            dispatch(signOutSuccess());
+          }
+    
+        } catch (error) {
+          next(error);
+          console.log(error);
+        }
+      }
+
     return (
         <Navbar className='border-b-2' >
             <Link to="/home" className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white' >
@@ -68,7 +88,7 @@ function Header() {
                             </Link>
 
                             <Dropdown.Divider />
-                            <Dropdown.Item>Sign Out</Dropdown.Item>
+                            <Dropdown.Item onClick={handleSignOut} >Sign Out</Dropdown.Item>
 
                         </Dropdown>)
                         :
