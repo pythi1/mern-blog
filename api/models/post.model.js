@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const postSchema = new mongoose.Schema(
     {
         userId: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
         },
 
@@ -18,7 +18,8 @@ const postSchema = new mongoose.Schema(
             unique: true,
         },
 
-        Image: {
+        image: {
+            content: '',
             type: String,
             default: 'https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png',
         },
