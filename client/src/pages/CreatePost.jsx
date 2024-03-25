@@ -21,7 +21,7 @@ export default function CreatePost() {
 
             </div>
 
-            <div className='flex gap-4 items-center justify-center border-4 border-teal-600 border-dotted p-3' >
+            <div className='flex gap-4 items-center justify-between border-4 border-teal-600 border-dotted p-3' >
                 <FileInput type='file' accept='image/*' />
                 <Button type='button' gradientDuoTone='purpleToBlue' size='sm' outline >Upload Image</Button>
             </div>
