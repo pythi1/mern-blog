@@ -6,6 +6,8 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/
 import { app } from '../firebase';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { useNavigate } from 'react-router-dom';
+// import { CommandStartedEvent } from 'mongodb';
 
 
 export default function CreatePost() {
@@ -14,9 +16,9 @@ export default function CreatePost() {
     const [imageUploadProgress, setimageUploadProgress] = useState(null);
     const [imageUploadError, setimageUplaodError] = useState(null);
     const [formInput, setformInput] = useState({});
+    const [publishError, setpublishError] = useState(null);
 
-
-
+    const navigate = useNavigate();
 
     // const handleChange = (e) => {
     //     const fvalues = { [e.target.id]: e.target.value }
@@ -55,12 +57,12 @@ export default function CreatePost() {
                     setimageUplaodError('image upload error');
                     setimageUploadProgress(null);
                 },
-                
+
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                         setimageUploadProgress(null);
                         setimageUplaodError(null);
-                        setformInput({ ...formInput, image: downloadURL });
+                        setformInput((prevState) => ({ ...prevState, image: downloadURL }));
                     });
                 }
             );
@@ -73,13 +75,50 @@ export default function CreatePost() {
     }
 
 
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const res = await fetch('/api/post/create-post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formInput),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setpublishError(data.message);
+                return;
+            }
+
+            setpublishError(null);
+            navigate(`/post/${data.slug}`);
+
+
+        } catch (error) {
+            setpublishError('Something went wrong.');
+        }
+    }
+
+
     return (
         <div className='p-3 max-w-3xl mx-auto min-h-screen' >
             <h1 className='text-center text-3xl my-7 font-semibold' >Create a Post</h1>
-            <form className='flex flex-col gap-4 ' >
+            <form className='flex flex-col gap-4 ' onSubmit={handleFormSubmit}>
                 <div className='flex flex-col gap-4 sm:flex-row justify-between' >
-                    <TextInput  type='text' placeholder='title' required id='title' className='flex-1 ' />
-                    <Select id='category' >
+
+                    <TextInput
+                        type='text'
+                        placeholder='title'
+                        required id='title'
+                        className='flex-1 '
+                        onChange={(e) => setformInput({ ...formInput, title: e.target.value })}
+                    />
+
+                    <Select id='category' onChange={(e) => setformInput((prev) => ({ ...prev, category: e.target.value }))} >
                         <option value="uncategorized" > select a category </option>
                         <option value='javascript' > Javascript </option>
                         <option value='react' > React </option>
@@ -110,20 +149,31 @@ export default function CreatePost() {
                     </Button>
                 </div>
                 {
-                    imageUploadError && <Alert color='failure'>{imageUploadError}</Alert> 
+                    imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>
                 }
 
                 {
-                    
+
                     formInput.image && (
                         <img src={formInput.image} alt='uplaod' className='w-full h-72 object-cover' />
                     )
 
                 }
 
-                <ReactQuill id='content' theme='snow' placeholder='write something' className='h-72 mb-12' required />
+                <ReactQuill
+                    id='content'
+                    theme='snow'
+                    placeholder='write something'
+                    className='h-72 mb-12'
+                    required
+                    onChange={(value) => setformInput({ ...formInput, content: value })}
+                />
 
                 <Button type='submit' gradientDuoTone='purpleToPink' >Publish</Button>
+
+                {
+                    publishError && <Alert color='failure' className='mt-5 ' >{publishError}</Alert>
+                }
 
             </form>
         </div>
