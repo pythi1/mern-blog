@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from 'cors';
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 import postRouter from './routes/post.route.js';
@@ -11,12 +12,13 @@ dotenv.config();
 mongoose
     .connect( process.env.MONGO )
     .then(() => { console.log("mongodb is connected") })
-    .catch((err) => { console.log(err) })
+    .catch((err) => console.log(err) )
 
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 app.use( "/api/user", userRouter );
 

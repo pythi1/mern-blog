@@ -81,8 +81,10 @@ export default function CreatePost() {
         try {
             const res = await fetch('/api/post/create-post', {
                 method: 'POST',
+                mode:'cors',
                 headers: {
                     'Content-Type': 'application/json',
+                    "Authorization": "Bearer <token>"
                 },
                 body: JSON.stringify(formInput),
             });

@@ -7,6 +7,7 @@ export default function DashPosts() {
 
     const { currentuser } = useSelector(state => state.user);
     const [userPosts, setuserPosts] = useState([]);
+    const [ showMore, setshowMore ] = useState(true);
 
     console.log(userPosts);
 
@@ -20,6 +21,9 @@ export default function DashPosts() {
 
                 if (res.ok) {
                     setuserPosts(data.posts);
+                    if(data.posts.length < 9){
+                        setshowMore(false);
+                    }
                 }
 
             } catch (error) {
@@ -31,7 +35,29 @@ export default function DashPosts() {
             fetchPosts();
         }
 
-    }, [currentuser._id])
+    }, [currentuser._id]);
+
+
+    const handleShowMoreClick = async () => {
+        const startindex = userPosts.length;
+
+        try {
+            const res = await fetch(`/api/post/getposts?userId=${currentuser._id}&startIndex=${startindex}`);
+            const data = await res.json();
+            if(res.ok){
+                setuserPosts((prev) => [...prev, ...data.posts]);
+                if(data.posts.length < 9){
+                    setshowMore(false);
+                }
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+    }
+
+
+
 
     return (
         <div className='table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500' >
@@ -92,6 +118,9 @@ export default function DashPosts() {
                             ))}
 
                         </Table>
+                        {
+                            showMore && <button onClick={handleShowMoreClick} className='w-full text-sm py-7 text-teal-500 self-center' >show more..</button>
+                        }
                     </>
                     :
                     <p>You have no posts.</p>
