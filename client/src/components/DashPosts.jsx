@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-import { Table } from 'flowbite-react';
+import { Button, Modal, Table } from 'flowbite-react';
 import { Link } from 'react-router-dom';
+import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
 export default function DashPosts() {
 
     const { currentuser } = useSelector(state => state.user);
     const [userPosts, setuserPosts] = useState([]);
-    const [ showMore, setshowMore ] = useState(true);
+    const [showMore, setshowMore] = useState(true);
+    const [showModal, setshowModal] = useState(false);
+    const [postIdToDelete, setpostIdToDelete] = useState('');
 
     console.log(userPosts);
 
@@ -21,7 +24,7 @@ export default function DashPosts() {
 
                 if (res.ok) {
                     setuserPosts(data.posts);
-                    if(data.posts.length < 9){
+                    if (data.posts.length < 9) {
                         setshowMore(false);
                     }
                 }
@@ -44,11 +47,35 @@ export default function DashPosts() {
         try {
             const res = await fetch(`/api/post/getposts?userId=${currentuser._id}&startIndex=${startindex}`);
             const data = await res.json();
-            if(res.ok){
+            if (res.ok) {
                 setuserPosts((prev) => [...prev, ...data.posts]);
-                if(data.posts.length < 9){
+                if (data.posts.length < 9) {
                     setshowMore(false);
                 }
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+
+    }
+
+
+    const handleDeletePost = async () => {
+
+        setshowModal(false);
+        try {
+            const res = await fetch(`/api/post/deletepost/${postIdToDelete}/${currentuser._id}`, {
+                method: 'DELETE',
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                console.log(data.message);
+            }
+            else {
+                setuserPosts((prev) =>
+                    prev.filter((post) =>
+                        post._id !== postIdToDelete
+                    ));
             }
         } catch (error) {
             console.log(error.message);
@@ -79,7 +106,7 @@ export default function DashPosts() {
                             </Table.Head>
 
                             {userPosts.map((post) => (
-                                <Table.Body className='divide-y' >
+                                <Table.Body key={post._id} className='divide-y' >
                                     <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800' >
                                         <Table.Cell >
                                             {new Date(post.updatedAt).toLocaleDateString()}
@@ -96,7 +123,12 @@ export default function DashPosts() {
                                         </Table.Cell>
 
                                         <Table.Cell>
-                                            <Link className='font-medium text-gray-900 dark:text-white' to={`/post/${post.slug}`} > {post.title} </Link>
+                                            <Link
+                                                className='font-medium text-gray-900 dark:text-white'
+                                                to={`/post/${post.slug}`}
+                                            >
+                                                {post.title}
+                                            </Link>
                                         </Table.Cell>
 
                                         <Table.Cell>
@@ -104,11 +136,19 @@ export default function DashPosts() {
                                         </Table.Cell>
 
                                         <Table.Cell>
-                                            <span className='font-medium text-red-500 hover:underline cursor-pointer' >DELETE</span>
+                                            <span
+                                                onClick={() => { setshowModal(true); setpostIdToDelete(post._id); }}
+                                                className='font-medium text-red-500 hover:underline cursor-pointer'
+                                            >
+                                                DELETE
+                                            </span>
                                         </Table.Cell>
 
                                         <Table.Cell>
-                                            <Link className='text-teal-500 hover:underline cursor-pointer' to={`/update-post/${post._id}`} >
+                                            <Link
+                                                className='text-teal-500 hover:underline cursor-pointer'
+                                                to={`/update-post/${post._id}`}
+                                            >
                                                 <span>edit</span>
                                             </Link>
                                         </Table.Cell>
@@ -119,12 +159,32 @@ export default function DashPosts() {
 
                         </Table>
                         {
-                            showMore && <button onClick={handleShowMoreClick} className='w-full text-sm py-7 text-teal-500 self-center' >show more..</button>
+                            showMore &&
+                            <button onClick={handleShowMoreClick} className='w-full text-sm py-7 text-teal-500 self-center' >
+                                show more...
+                            </button>
                         }
                     </>
                     :
                     <p>You have no posts.</p>
             }
+
+            <Modal show={showModal} onClose={() => setshowModal(false)} popup size='md' >
+                <Modal.Header />
+                <Modal.Body>
+                    <div className='text-center' >
+                        <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
+                        <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>Are you sure you want to DELETE this post</h3>
+
+                        <div className='flex justify-center gap-4' >
+                            <Button color='failure' onClick={handleDeletePost} > Yes i'm sure</Button>
+
+                            <Button color='gray' onClick={() => setshowModal(false)} > No </Button>
+                        </div>
+
+                    </div>
+                </Modal.Body>
+            </Modal>
         </div>
-    )
+    );
 }
