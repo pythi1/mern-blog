@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -12,6 +11,7 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 import PrivateAdminRoute from './components/PrivateAdminRoute.jsx';
 import CreatePost from './pages/CreatePost.jsx';
 import UpdatePost from './pages/updatePosts.jsx';
+import PostPage from './pages/PostPage.jsx';
 
 
 function App() {
@@ -39,7 +39,10 @@ function App() {
 
         <Route path="/projects" element={<Projects />} />
 
+        <Route path='/post/:postSlug' element={<PostPage />} />
+
       </Routes>
+
       <Footer />
     </BrowserRouter>
   )
