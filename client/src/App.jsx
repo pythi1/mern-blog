@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import PrivateAdminRoute from './components/PrivateAdminRoute.jsx';
 import CreatePost from './pages/CreatePost.jsx';
+import UpdatePost from './pages/updatePosts.jsx';
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
 
         <Route element={<PrivateAdminRoute />}>
           <Route path='/create-post' element={<CreatePost />} />
+          <Route path='/update-post/:postId' element={<UpdatePost />} />
         </Route>
 
         <Route path="/signin" element={<Singin />} />
