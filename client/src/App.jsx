@@ -12,12 +12,14 @@ import PrivateAdminRoute from './components/PrivateAdminRoute.jsx';
 import CreatePost from './pages/CreatePost.jsx';
 import UpdatePost from './pages/updatePosts.jsx';
 import PostPage from './pages/PostPage.jsx';
+import ScrollToTop from './components/ScrollToTop.jsx';
 
 
 function App() {
 
   return (
     <BrowserRouter>
+    <ScrollToTop />
       <Header />
       <Routes>
         <Route path="/home" element={<Home />} />
