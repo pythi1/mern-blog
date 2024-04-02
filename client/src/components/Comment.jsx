@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import { FaThumbsUp } from 'react-icons/fa'
 
-export default function Comment({ comment }) {
+export default function Comment({ comment, onlike }) {
 
     const [user, setuser] = useState({});
 
-    console.log(user);
+    // console.log(user);
 
     useEffect(() => {
         const getuser = async () => {
@@ -35,10 +36,26 @@ export default function Comment({ comment }) {
 
             <div className='flex-1' >
                 <div className='flex items-center mb-1 ' >
-                    <span className='font-bold mr-1 text-sm truncate text-blue-300' > <Link to={`/dashboard?tab=profile`} > {user ? `@${user.username} ` : 'anonymous user'} </Link>  </span>
+                    <span className='font-bold mr-1 text-sm truncate' > <Link to={`/dashboard?tab=profile`} > {user ? `@${user.username} ` : 'anonymous user'} </Link>  </span>
                     <span className='text-gray-500 text-xs ' > {moment(comment.createdAt).fromNow()} </span>
                 </div>
                 <p className='text-gray-500 pb-2' >{comment.content}</p>
+
+                <div className='flex items-center pt-2 text-xs gap-3' >
+                    <button
+                        type='button'
+                        className={`text-gray-400 hover:text-blue-500 ${user && comment.likes.includes(user._id) && '!text-blue-500'}`}
+                        onClick={() => onlike(comment._id)}
+                    >
+                        <FaThumbsUp className='text-sm ' />
+                    </button>
+                    <p className='text-gray-400' >
+                        {
+                            comment.numberOfLikes > 0 && comment.numberOfLikes + " " + (comment.numberOfLikes === 1 ? "like" : "likes")
+                        }
+                    </p>
+                </div>
+
             </div>
         </div>
     )
