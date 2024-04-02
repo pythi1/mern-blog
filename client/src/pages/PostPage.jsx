@@ -11,7 +11,7 @@ export default function PostPage() {
     const [error, seterror] = useState(false);
     const [post, setpost] = useState(null);
 
-    console.log(post);
+    // console.log(post);
 
     useEffect(() => {
 

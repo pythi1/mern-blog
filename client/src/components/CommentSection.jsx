@@ -1,13 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Button, Textarea } from 'flowbite-react';
+import Comment from './Comment.jsx';
 
 export default function CommentSection({ postId }) {
 
     const { currentuser } = useSelector(state => state.user);
     const [comment, setcomment] = useState('');
-    const [commentError, setcommentError] = useState(null)
+    const [commentError, setcommentError] = useState(null);
+    const [storedComments, setstoredComments] = useState([]);
+
+    console.log(storedComments);
+
+    useEffect(() => {
+
+        const getcomment = async () => {
+            try {
+                const res = await fetch(`/api/comment/getpostcomment/${postId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setstoredComments(data);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        getcomment();
+
+    }, [postId])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,6 +55,7 @@ export default function CommentSection({ postId }) {
             if (res.ok) {
                 setcomment('');
                 setcommentError(null);
+                setstoredComments([data, ...storedComments]);
             }
         } catch (error) {
             setcommentError(error.message);
@@ -82,6 +105,25 @@ export default function CommentSection({ postId }) {
 
 
             )}
+
+            {
+                storedComments === 0
+                    ?
+                    (<p className='text-sm my-5' >No Comments</p>)
+                    :
+                    <div>
+                        <div className='text-sm my-5 flex items-center gap-1' >
+                            <p>Comments</p>
+                            <div className='border border-gray-400 py-1 px-2 rounded-sm' >
+                                <p>{storedComments.length}</p>
+                            </div>
+                        </div>
+
+                        {storedComments.map(comment => <Comment key={comment._id} comment={comment} />)}
+
+                    </div>
+
+            }
 
         </div>
     )
