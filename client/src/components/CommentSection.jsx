@@ -16,7 +16,7 @@ export default function CommentSection({ postId }) {
 
     const navigate = useNavigate();
 
-    console.log(storedComments);
+    // console.log(storedComments);
 
     useEffect(() => {
 
