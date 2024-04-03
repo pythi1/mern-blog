@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaThumbsUp } from 'react-icons/fa'
 import { Button, Textarea } from 'flowbite-react'
 
-export default function Comment({ comment, onlike, onEdit }) {
+export default function Comment({ comment, onlike, onEdit, onDelete }) {
 
     const [user, setuser] = useState({});
     const [isEditing, setisEditing] = useState(false);
@@ -55,11 +55,11 @@ export default function Comment({ comment, onlike, onEdit }) {
 
             });
 
-            if (res.ok){
+            if (res.ok) {
                 setisEditing(false);
-                onEdit( comment, editedContent );
+                onEdit(comment, editedContent);
             }
-            
+
         } catch (error) {
             console.log(error);
         }
@@ -130,13 +130,23 @@ export default function Comment({ comment, onlike, onEdit }) {
                             </p>
                             {
                                 user && (user._id === comment.userId || user.isAdmin) && (
-                                    <button
-                                        type='button'
-                                        className='text-gray-400 hover:text-blue-500'
-                                        onClick={handleEditComment}
-                                    >
-                                        edit
-                                    </button>
+                                    <>
+                                        <button
+                                            type='button'
+                                            className='text-gray-400 hover:text-blue-500'
+                                            onClick={handleEditComment}
+                                        >
+                                            edit
+                                        </button>
+
+                                        <button
+                                            type='button'
+                                            className='text-gray-400 hover:text-red-500'
+                                            onClick={() => onDelete(comment._id)}
+                                        >
+                                            delete
+                                        </button>
+                                    </>
                                 )
                             }
                         </div>
