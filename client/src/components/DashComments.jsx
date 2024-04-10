@@ -22,11 +22,10 @@ export default function DashComments() {
 
 
                 if (res.ok) {
-                    if (data.comment && data.comment.length !== 0) {
-                        setComments(data.comment);
-                        if (data.comment.length < 9) {
+                    if (data.comments && data.comments.length !== 0) {
+                        setComments(data.comments);
+                        if (data.comments.length < 9) {
                             setshowMore(false);
-                            console.log("console logging data: ", data);
                         }
                     }
                 }

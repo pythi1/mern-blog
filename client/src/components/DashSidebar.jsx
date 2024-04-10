@@ -49,6 +49,24 @@ function DashSidebar() {
         <Sidebar className='w-full md:w-56' >
             <Sidebar.Items>
                 <Sidebar.ItemGroup className='flex flex-col gap-1' >
+
+                    {
+                        currentuser.isAdmin && (
+
+                            <Link to='/dashboard?tab=dashboard' >
+                                <Sidebar.Item
+                                    active={tab === 'dashboard'}
+                                    icon={HiDocumentText}
+                                    as='div'
+                                >
+
+                                    Dashboard
+
+                                </Sidebar.Item>
+                            </Link>
+                        )
+                    }
+
                     <Link to="/dashboard?tab=profile">
                         <Sidebar.Item
                             active={tab === "profile"}
@@ -102,7 +120,7 @@ function DashSidebar() {
                                         as='div'
                                     >
 
-                                       comments
+                                        comments
 
                                     </Sidebar.Item>
                                 </Link>
