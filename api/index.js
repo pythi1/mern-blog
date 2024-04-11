@@ -21,11 +21,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
-app.use( "/api/user", userRouter );
+app.use("/api/user", userRouter );
 
 app.use("/api/auth", authRouter );
 
-app.use( '/api/post', postRouter);
+app.use('/api/post', postRouter);
 
 app.use('/api/comment', commentRouter);
 

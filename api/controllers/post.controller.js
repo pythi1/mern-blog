@@ -3,7 +3,7 @@ import { errorhandler } from "../utils/error.js";
 
 export const Create = async (req, res, next) => {
 
-    console.log(req.body);
+    // console.log(req.body);
 
     if (!req.user.isAdmin) {
         return next(errorhandler(403, 'you ar enot allowed to create a post'));
