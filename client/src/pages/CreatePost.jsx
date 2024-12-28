@@ -30,7 +30,7 @@ export default function CreatePost() {
 
 
     console.log(formInput);
-    console.log(formInput.image);
+    // console.log(formInput.image);
 
 
 

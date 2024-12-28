@@ -19,12 +19,18 @@ export default function UpdatePost() {
     const [formInput, setformInput] = useState({});
     const [publishError, setpublishError] = useState(null);
     const { postId } = useParams();
-    const { currentuser } = useSelector( (state) => state.user );
+    const { currentuser } = useSelector((state) => state.user);
 
     const navigate = useNavigate();
 
 
+
     useEffect(() => {
+
+        // console.log("postid : ", postId);
+        // console.log("userid : ", currentuser._id);
+        
+
 
         try {
 
@@ -40,25 +46,24 @@ export default function UpdatePost() {
 
                 if (res.ok) {
                     setpublishError(null);
-                    setformInput(data.posts[0]);
+                    // setformInput(data.posts[0]);
+                    setformInput((prev) => ( { ...prev, ...data.posts[0]}));
                 }
-
-                
-           
-        }
+            }
 
             fetchPost();
-            
-  
+
+
         } catch (error) {
-            console.log(error)
+            console.log(" error in fetching post ", error)
+            setpublishError('failed to fetch post...');
         }
 
     }, [postId])
 
 
     // console.log(currentuser._id)
-    console.log("forminput._: ", formInput);
+    console.log("forminput : ", formInput);
 
 
 
@@ -107,12 +112,12 @@ export default function UpdatePost() {
         e.preventDefault();
 
         try {
-            console.log( "form data : ", formInput);
+            // console.log( "form data : ", formInput);
             console.log( "formid : ", formInput._id);
-            console.log( "currentid : ", currentuser._id);
+            // console.log( "currentid : ", currentuser._id);
             const res = await fetch(`/api/post/updatepost/${formInput._id}/${currentuser._id}`, {
                 method: 'PUT',
-               
+
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -136,6 +141,8 @@ export default function UpdatePost() {
     }
 
 
+
+
     return (
         <div className='p-3 max-w-3xl mx-auto min-h-screen' >
             <h1 className='text-center text-3xl my-7 font-semibold' >Update Post</h1>
@@ -147,15 +154,15 @@ export default function UpdatePost() {
                         placeholder='title'
                         required id='title'
                         className='flex-1 '
-                        
-                        onChange={(e) => setformInput({ ...formInput, title: e.target.value })}
+
+                        onChange={(e) => setformInput( (prev) => ({ ...prev, title: e.target.value }))}
                         value={formInput.title}
                     />
 
-                    <Select id='category' 
-                    
-                    onChange={(e) => setformInput({ ...formInput, category: e.target.value })} 
-                    value={formInput.category} 
+                    <Select id='category'
+
+                        onChange={(e) => setformInput((prev) => ({ ...prev, category: e.target.value }))}
+                        value={formInput.category}
                     >
                         <option value="uncategorized" > select a category </option>
                         <option value='javascript' > Javascript </option>
@@ -207,8 +214,8 @@ export default function UpdatePost() {
                     theme='snow'
                     placeholder='write something'
                     className='h-72 mb-12'
-                    required                    
-                    onChange={(value) => setformInput({ ...formInput, content: value })}
+                    required
+                    onChange={(value) => setformInput((prev) => ({ ...prev, content: value }))}
                     value={formInput.content}
                 />
 

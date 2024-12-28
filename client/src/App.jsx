@@ -13,6 +13,7 @@ import CreatePost from './pages/CreatePost.jsx';
 import UpdatePost from './pages/updatePosts.jsx';
 import PostPage from './pages/PostPage.jsx';
 import ScrollToTop from './components/ScrollToTop.jsx';
+import Search from './pages/Search.jsx';
 
 
 function App() {
@@ -38,6 +39,8 @@ function App() {
         <Route path="/signin" element={<Singin />} />
 
         <Route path="/signup" element={<Singup />} />
+
+        <Route path="/search" element={<Search />} />
 
         <Route path="/projects" element={<Projects />} />
 

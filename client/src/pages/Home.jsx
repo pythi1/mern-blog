@@ -37,9 +37,9 @@ function Home() {
 
         {
           posts && posts.length > 0 && (
-            <div className='flex flex-col gap-6 mx-auto items-center justify-center' >
+            <div className='flex flex-col gap-6 mx-auto' >
               <h2 className='text-2xl font-semibold text-center' > Recent Posts </h2>
-              <div className='flex gap-4 flex-wrap' >
+              <div className='flex gap-4 flex-wrap mx-auto items-center justify-center' >
                   {posts.map((post) => (
                       <PostCard key={post._id} post={post}/>
                   ))}
